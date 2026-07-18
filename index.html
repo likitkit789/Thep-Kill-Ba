@@ -2,436 +2,161 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
-<title>Baccarat AI V20 PRO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baccarat V20 Mobile</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-background:#0f172a;
-font-family:Arial;
-color:white;
-padding:15px;
+    background:#0f172a;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    padding:16px 16px 120px;
 }
-
 .container{
-max-width:1200px;
-margin:auto;
+    max-width:700px;
+    margin:auto;
 }
-
-h1{
-text-align:center;
-margin-bottom:20px;
-}
-
 .card{
-background:#1e293b;
-padding:15px;
-border-radius:12px;
-margin-bottom:15px;
-box-shadow:0 0 10px rgba(0,0,0,.3);
+    background:#1e293b;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
 }
-
-.grid{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(250px,1fr));
-gap:10px;
+h1{
+    text-align:center;
+    margin-bottom:15px;
 }
-
-button{
-padding:12px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-margin:4px;
-font-size:16px;
-}
-
-.b{
-background:#dc2626;
-color:white;
-}
-
-.p{
-background:#2563eb;
-color:white;
-}
-
-.t{
-background:#16a34a;
-color:white;
-}
-
-.gray{
-background:#374151;
-color:white;
-}
-
-textarea,
-input{
-
-width:100%;
-padding:10px;
-margin-top:8px;
-margin-bottom:8px;
-border-radius:8px;
-border:none;
-background:#334155;
-color:white;
-}
-
 .big{
-
-font-size:32px;
-text-align:center;
-font-weight:bold;
+    font-size:34px;
+    font-weight:bold;
+    text-align:center;
 }
-
-.safe{
-color:#22c55e;
+textarea{
+    width:100%;
+    min-height:90px;
+    border:none;
+    border-radius:8px;
+    padding:10px;
+    background:#334155;
+    color:#fff;
+    margin-top:10px;
 }
-
-.risk{
-color:#f59e0b;
+#dock{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#111827;
+    border-radius:18px;
+    padding:10px;
+    display:flex;
+    gap:8px;
+    box-shadow:0 0 15px rgba(0,0,0,.5);
+    touch-action:none;
 }
-
-.trap{
-color:#ef4444;
+#dock button{
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    color:#fff;
 }
-
-.dot{
-
-width:30px;
-height:30px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-margin:3px;
-}
-
-.red{
-background:#dc2626;
-}
-
-.blue{
-background:#2563eb;
-}
-
-.green{
-background:#16a34a;
-}
-
-.history{
-display:flex;
-flex-wrap:wrap;
-}
-
-canvas{
-width:100%;
-background:#111827;
-border-radius:10px;
-}
-
-@media(max-width:600px){
-
-button{
-width:100%;
-}
-
-}
-
+.b{background:#dc2626;}
+.p{background:#2563eb;}
+.t{background:#16a34a;}
+.g{background:#374151;}
 </style>
 </head>
-
 <body>
 
 <div class="container">
 
-<h1>
-🧠 BACCARAT AI V20 PRO
-</h1>
+<h1>🧠 Baccarat V20 Mobile</h1>
 
 <div class="card">
+<div class="big" id="recommend">-</div>
+<br>
+Confidence: <span id="confidence">0%</span><br>
+Zone: <span id="zone">-</span>
+</div>
+
+<div class="card">
+Dragon: <span id="dragon">-</span><br>
+Pingpong: <span id="pingpong">-</span><br>
+Two-Cut: <span id="twocut">-</span><br>
+Trap: <span id="trap">-</span><br>
+DNA12: <span id="dna">-</span>
+</div>
+
+<div class="card">
+P1: <span id="p1"></span><br>
+P2: <span id="p2"></span><br>
+P3: <span id="p3"></span><br>
+P4: <span id="p4"></span><br>
+TOP: <span id="top"></span>
+</div>
+
+<div class="card">
+RAW<br>
+<div id="raw"></div>
+<br>
+CLEAN<br>
+<div id="clean"></div>
+<br>
+GROUPS<br>
+<div id="groups"></div>
+</div>
+
+<div class="card">
+History
+<hr><br>
+<div id="history"></div>
+</div>
+
+<div class="card">
+Backtest
+<hr><br>
+<div id="backtest"></div>
+</div>
+
+<div class="card">
+Bulk Input
+<textarea id="bulkInput"
+placeholder="BPPTBBPPBBP"></textarea>
+
+<button onclick="importPattern()"
+style="margin-top:10px;width:100%;padding:12px;">
+Import
+</button>
+</div>
+
+</div>
+<div id="dock">
 
 <button class="b"
 onclick="add('B')">
-🔴 Banker
+🔴
 </button>
 
 <button class="p"
 onclick="add('P')">
-🔵 Player
+🔵
 </button>
 
 <button class="t"
 onclick="add('T')">
-🟢 Tie
+🟢
 </button>
 
-<button class="gray"
+<button class="g"
 onclick="undo()">
-↩ Undo
+↩
 </button>
 
-<button class="gray"
+<button class="g"
 onclick="resetAll()">
-🗑 Reset
+✕
 </button>
-
-</div>
-
-<div class="card">
-
-<h3>Bulk Input</h3>
-
-<textarea
-id="bulkInput"
-rows="4"
-placeholder="
-BPPTBBPPBBBPPT
-หรือ
-B P P T B B">
-</textarea>
-
-<button
-class="gray"
-onclick="importPattern()">
-📥 Import Pattern
-</button>
-
-</div>
-
-<div class="card">
-
-<h3>Manual Statistics</h3>
-
-<div class="grid">
-
-<div>
-🔴 Banker
-<input id="manualB"
-type="number">
-</div>
-
-<div>
-🔵 Player
-<input id="manualP"
-type="number">
-</div>
-
-<div>
-🟢 Tie
-<input id="manualT"
-type="number">
-</div>
-
-</div>
-
-</div>
-
-<div class="grid">
-
-<div class="card">
-<h3>Recommendation</h3>
-<div
-id="recommend"
-class="big">
--
-</div>
-</div>
-
-<div class="card">
-<h3>Confidence</h3>
-<div
-id="confidence">
--
-</div>
-</div>
-
-<div class="card">
-<h3>Zone</h3>
-<div id="zone">
--
-</div>
-</div>
-
-<div class="card">
-<h3>Pattern</h3>
-<div id="pattern">
--
-</div>
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Developer View</h3>
-
-<p>
-RAW:
-<span id="raw"></span>
-</p>
-
-<br>
-
-<p>
-CLEAN:
-<span id="clean"></span>
-</p>
-
-<br>
-
-<p>
-Groups:
-<span id="groups"></span>
-</p>
-
-<br>
-
-<p>
-Dragon:
-<span id="dragon"></span>
-</p>
-
-<p>
-Pingpong:
-<span id="pingpong"></span>
-</p>
-
-<p>
-Two Cut:
-<span id="twocut"></span>
-</p>
-
-<p>
-Trap:
-<span id="trap"></span>
-</p>
-
-<p>
-Switch:
-<span id="switch"></span>
-</p>
-
-<p>
-DNA12:
-<span id="dna"></span>
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>Einstein Layer</h3>
-
-<p>P1 Momentum :
-<span id="p1"></span></p>
-
-<p>P2 DNA :
-<span id="p2"></span></p>
-
-<p>P3 Trap :
-<span id="p3"></span></p>
-
-<p>P4 Pingpong :
-<span id="p4"></span></p>
-
-<br>
-
-<h3>
-TOP PLAN:
-<span id="topPlan">
--
-</span>
-</h3>
-
-</div>
-
-<div class="card">
-
-<h3>Daily Stats</h3>
-
-<p>
-Win :
-<span id="win">
-0
-</span>
-</p>
-
-<p>
-Lose :
-<span id="lose">
-0
-</span>
-</p>
-
-<p>
-Accuracy :
-<span id="dailyAcc">
-0
-</span>
-%
-</p>
-
-<p>
-Drawdown :
-<span id="drawdown">
--
-</span>
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>Backtest</h3>
-
-<div id="backtest">
--
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>History</h3>
-
-<div
-id="history"
-class="history">
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Big Road</h3>
-
-<div
-id="bigRoad">
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Trend Graph</h3>
-
-<canvas
-id="trend"
-height="150">
-</canvas>
 
 </div>
 <script>
@@ -443,67 +168,29 @@ localStorage.getItem(
 )||"[]"
 );
 
-let win=
-parseInt(
-localStorage.getItem(
-"win"
-)||0
-);
-
-let lose=
-parseInt(
-localStorage.getItem(
-"lose"
-)||0
-);
-
 function save(){
-
 localStorage.setItem(
 "baccarat",
 JSON.stringify(history)
 );
-
-localStorage.setItem(
-"win",
-win
-);
-
-localStorage.setItem(
-"lose",
-lose
-);
-
 }
 
 function add(v){
-
 history.push(v);
-
 save();
-
 render();
-
 }
 
 function undo(){
-
 history.pop();
-
 save();
-
 render();
-
 }
 
 function resetAll(){
-
 history=[];
-
 save();
-
 render();
-
 }
 
 function importPattern(){
@@ -512,174 +199,86 @@ let txt=
 document
 .getElementById(
 "bulkInput"
-)
-.value;
-
-txt=txt
+).value
 .toUpperCase()
 .replace(/[^BPT]/g,'');
 
-history=
-txt.split('');
-
+history=txt.split('');
 save();
-
 render();
-
 }
 
 function clean(){
-
 return history
-.filter(
-x=>x!=="T"
-)
+.filter(x=>x!=="T")
 .join('');
-
 }
 
 function groups(){
 
 let s=clean();
 
-if(!s.length)
-return "";
+if(!s)return "";
 
 let out=[];
-
 let c=1;
 
-for(
-let i=1;
-i<=s.length;
-i++
-){
+for(let i=1;i<=s.length;i++){
 
-if(
-s[i]===s[i-1]
-){
+if(s[i]===s[i-1]){
 c++;
 }else{
-
 out.push(
 s[i-1]+c
 );
-
 c=1;
 }
 }
 
-return out.join('-');
-
+return out.join("-");
 }
 
-function dragon(){
-
-let s=clean();
-
-return
+const dragon=()=>
 /BBB|PPP/.test(
-s.slice(-3)
-);
-}
-
-function pingpong(){
-
-let s=
-clean()
-.slice(-6);
-
-return(
-s==="BPBPBP"||
-s==="PBPBPB"
+clean().slice(-3)
 );
 
-}
+const pingpong=()=>
+["BPBPBP","PBPBPB"]
+.includes(
+clean().slice(-6)
+);
 
-function twoCut(){
-
-let s=
-clean()
-.slice(-8);
-
-return(
+const twoCut=()=>
 /BBPPBB|PPBBPP/
-.test(s)
+.test(
+clean().slice(-8)
 );
 
-}
-
-function trap(){
+const trap=()=>{
 
 let s=
-clean();
-
-let last4=
-s.slice(-4);
+clean().slice(-4);
 
 return(
-last4==="BBBP"||
-last4==="PPPB"
+s==="BBBP"||
+s==="PPPB"
 );
 
-}
-    function switchCount(){
-
-let s=clean();
-
-let n=0;
-
-for(
-let i=1;
-i<s.length;
-i++
-){
-
-if(
-s[i]!=s[i-1]
-)
-n++;
-
-}
-
-return n;
-
-}
-
-function dna12(){
-
-return clean()
-.slice(-12);
-
-}
+};
 
 function confidence(){
 
 let score=50;
 
-if(dragon())
-score+=15;
-
-if(twoCut())
-score+=8;
-
-if(pingpong())
-score+=8;
-
-if(trap())
-score-=15;
-
-if(
-switchCount()>=4
-)
-score-=10;
+if(dragon())score+=15;
+if(pingpong())score+=8;
+if(twoCut())score+=8;
+if(trap())score-=15;
 
 return Math.max(
 0,
-Math.min(
-100,
-score
-)
+Math.min(100,score)
 );
 
 }
@@ -704,44 +303,97 @@ let c=
 confidence();
 
 if(c<60)
-return "⚠️ SKIP";
+return "WAIT";
 
 let s=
 clean();
 
-let last3=
-s.slice(-3);
-
 if(
-last3==="BBB"
+s.endsWith("BBB")
 )
-return
-"🔴 BANKER";
+return "BANKER";
 
 if(
-last3==="PPP"
+s.endsWith("PPP")
 )
-return
-"🔵 PLAYER";
+return "PLAYER";
 
-if(
-pingpong()
-){
-
-return
-s.slice(-1)==="B"
-?
-"🔵 PLAYER"
-:
-"🔴 BANKER";
-
+return "WAIT";
 }
 
-return
-"⚠️ WAIT";
-}
+function dna12(){
 
-function planScore(){
+return clean()
+.slice(-12);
+
+}
+function render(){
+
+document.getElementById(
+"recommend"
+).innerHTML=
+recommend();
+
+document.getElementById(
+"confidence"
+).innerHTML=
+confidence()+"%";
+
+document.getElementById(
+"zone"
+).innerHTML=
+zone();
+
+document.getElementById(
+"dragon"
+).innerHTML=
+dragon();
+
+document.getElementById(
+"pingpong"
+).innerHTML=
+pingpong();
+
+document.getElementById(
+"twocut"
+).innerHTML=
+twoCut();
+
+document.getElementById(
+"trap"
+).innerHTML=
+trap();
+
+document.getElementById(
+"dna"
+).innerHTML=
+dna12();
+
+document.getElementById(
+"raw"
+).innerHTML=
+history.join("");
+
+document.getElementById(
+"clean"
+).innerHTML=
+clean();
+
+document.getElementById(
+"groups"
+).innerHTML=
+groups();
+
+document.getElementById(
+"history"
+).innerHTML=
+history.join("");
+
+document.getElementById(
+"backtest"
+).innerHTML=
+`Rule Confidence:
+${confidence()}%`;
 
 let p1=
 dragon()?80:50;
@@ -756,200 +408,72 @@ trap()?40:70;
 let p4=
 pingpong()?75:60;
 
-return{
-p1,p2,p3,p4
-};
+document.getElementById("p1").innerHTML=p1;
+document.getElementById("p2").innerHTML=p2;
+document.getElementById("p3").innerHTML=p3;
+document.getElementById("p4").innerHTML=p4;
 
+let top="P1";
+let max=p1;
+
+[
+["P2",p2],
+["P3",p3],
+["P4",p4]
+].forEach(x=>{
+if(x[1]>max){
+max=x[1];
+top=x[0];
 }
-    function render(){
-
-document
-.getElementById(
-"raw"
-).innerHTML=
-history.join('');
-
-document
-.getElementById(
-"clean"
-).innerHTML=
-clean();
-
-document
-.getElementById(
-"groups"
-).innerHTML=
-groups();
-
-document
-.getElementById(
-"dragon"
-).innerHTML=
-dragon();
-
-document
-.getElementById(
-"pingpong"
-).innerHTML=
-pingpong();
-
-document
-.getElementById(
-"twocut"
-).innerHTML=
-twoCut();
-
-document
-.getElementById(
-"trap"
-).innerHTML=
-trap();
-
-document
-.getElementById(
-"switch"
-).innerHTML=
-switchCount();
-
-document
-.getElementById(
-"dna"
-).innerHTML=
-dna12();
-
-document
-.getElementById(
-"recommend"
-).innerHTML=
-recommend();
-
-document
-.getElementById(
-"confidence"
-).innerHTML=
-confidence()+"%";
-
-document
-.getElementById(
-"zone"
-).innerHTML=
-zone();
-
-let p=
-planScore();
-
-document
-.getElementById(
-"p1"
-).innerHTML=
-p.p1;
-
-document
-.getElementById(
-"p2"
-).innerHTML=
-p.p2;
-
-document
-.getElementById(
-"p3"
-).innerHTML=
-p.p3;
-
-document
-.getElementById(
-"p4"
-).innerHTML=
-p.p4;
-
-let top=
-Object.keys(p)
-.reduce(
-(a,b)=>
-p[a]>p[b]
-?a:b
-);
-
-document
-.getElementById(
-"topPlan"
-).innerHTML=
-top;
-
-document
-.getElementById(
-"dailyAcc"
-).innerHTML=
-(
-win+lose
-?
-(
-win/
-(win+lose)
-*100
-).toFixed(1)
-:0
-);
-
-document
-.getElementById(
-"drawdown"
-).innerHTML=
-lose>=4
-?
-"❗❗HIGH"
-:
-lose>=3
-?
-"❗MEDIUM"
-:
-"-";
-
-document
-.getElementById(
-"backtest"
-).innerHTML=
-`
-Accuracy :
-${confidence()}%
-`;
-
-let html="";
-
-history.forEach(
-x=>{
-
-let cls=
-x==="B"
-?
-"red"
-:
-x==="P"
-?
-"blue"
-:
-"green";
-
-html+=`
-<div
-class="
-dot ${cls}
-">
-${x}
-</div>
-`;
-
 });
 
-document
-.getElementById(
-"history"
+document.getElementById(
+"top"
 ).innerHTML=
-html;
+top;
 
 }
 
 render();
+
+/* Draggable Dock */
+
+const dock=
+document.getElementById(
+"dock"
+);
+
+let move=false;
+
+dock.addEventListener(
+"touchstart",
+()=>move=true
+);
+
+dock.addEventListener(
+"touchend",
+()=>move=false
+);
+
+dock.addEventListener(
+"touchmove",
+e=>{
+
+if(!move)return;
+
+let t=
+e.touches[0];
+
+dock.style.left=
+t.clientX+"px";
+
+dock.style.top=
+t.clientY+"px";
+
+dock.style.bottom=
+"auto";
+
+});
 
 </script>
 
