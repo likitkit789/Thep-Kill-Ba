@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baccarat AI V20</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#111827;
+    color:#fff;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.card{
+    background:#1f2937;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+h1{
+    text-align:center;
+}
+
+button{
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    margin:5px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.b{background:#dc2626;color:white;}
+.p{background:#2563eb;color:white;}
+.t{background:#16a34a;color:white;}
+.gray{background:#374151;color:white;}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:10px;
+}
+
+.history{
+    display:flex;
+    flex-wrap:wrap;
+}
+
+.dot{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    margin:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.red{background:#dc2626;}
+.blue{background:#2563eb;}
+.green{background:#16a34a;}
+
+.big{
+    font-size:28px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.safe{color:#22c55e;}
+.warn{color:#f59e0b;}
+.danger{color:#ef4444;}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>🧠 BACCARAT AI V20</h1>
+
+<div class="card">
+
+<button class="b" onclick="add('B')">🔴 Banker</button>
+<button class="p" onclick="add('P')">🔵 Player</button>
+<button class="t" onclick="add('T')">🟢 Tie</button>
+
+<button class="gray" onclick="undo()">↩ Undo</button>
+<button class="gray" onclick="resetAll()">🗑 Reset</button>
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Statistics</h3>
+<div id="stats"></div>
+</div>
+
+<div class="card">
+<h3>Confidence</h3>
+<div id="confidence"></div>
+</div>
+
+<div class="card">
+<h3>Pattern</h3>
+<div id="pattern"></div>
+</div>
+
+<div class="card">
+<h3>Recommendation</h3>
+<div id="recommend" class="big"></div>
+</div>
+
+</div>
+
+<div class="card">
+<h3>RAW</h3>
+<div id="raw"></div>
+
+<h3>CLEAN</h3>
+<div id="clean"></div>
+
+<h3>Groups</h3>
+<div id="groups"></div>
+</div>
+
+<div class="card">
+<h3>History</h3>
+<div id="history" class="history"></div>
+</div>
+
+<div class="card">
+<h3>Backtest</h3>
+<div id="backtest"></div>
+</div>
+
+</div>
+
+<script>
+
+let history = JSON.parse(
+localStorage.getItem("baccarat") || "[]"
+);
+
+function save(){
+    localStorage.setItem(
+        "baccarat",
+        JSON.stringify(history)
+    );
+}
+
+function add(v){
+    history.push(v);
+    save();
+    render();
+}
+
+function undo(){
+    history.pop();
+    save();
+    render();
+}
+
+function resetAll(){
+
+    if(confirm("ล้างข้อมูลทั้งหมด?")){
+        history=[];
+        save();
+        render();
+    }
+}
+
+function cleanPattern(){
+
+    return history.filter(
+        x=>x!=="T"
+    ).join("");
+}
+
+function groupPattern(str){
+
+    if(!str.length) return "";
+
+    let result=[];
+    let count=1;
+
+    for(let i=1;i<=str.length;i++){
+
+        if(str[i]===str[i-1]){
+            count++;
+        }else{
+            result.push(
+                str[i-1]+count
+            );
+            count=1;
+        }
+    }
+
+    return result.join("-");
+}
+
+function detectPattern(clean){
+
+    let last6=clean.slice(-6);
+
+    if(/BBB|PPP/.test(clean.slice(-3))){
+        return "🐉 Dragon";
+    }
+
+    if(
+        last6==="BPBPBP" ||
+        last6==="PBPBPB"
+    ){
+        return "♻️ Pingpong";
+    }
+
+    if(
+        /BBPPBB|PPBBPP/.test(last6)
+    ){
+        return "✂️ Two Cut";
+    }
+
+    return "🔁 Mixed";
+}
+
+function confidence(clean){
+
+    let score=50;
+
+    let last3=clean.slice(-3);
+
+    if(last3==="BBB" || last3==="PPP")
+        score+=15;
+
+    let switches=0;
+
+    for(let i=1;i<clean.length;i++){
+        if(clean[i]!==clean[i-1])
+            switches++;
+    }
+
+    if(switches>=4)
+        score-=10;
+
+    if(clean.length>=10)
+        score+=5;
+
+    score=Math.max(
+        0,
+        Math.min(100,score)
+    );
+
+    return score;
+}
+
+function recommendation(clean,conf){
+
+    if(conf<60)
+        return "⚠️ งดแทง";
+
+    let last3=clean.slice(-3);
+
+    if(last3==="BBB")
+        return "🔴 Banker";
+
+    if(last3==="PPP")
+        return "🔵 Player";
+
+    let last2=clean.slice(-2);
+
+    if(last2==="BB")
+        return "⏳ รอ B3";
+
+    if(last2==="PP")
+        return "⏳ รอ P3";
+
+    return "⚠️ รอยืนยัน";
+}
+
+function backtest(){
+
+    let clean=cleanPattern();
+
+    if(clean.length<15)
+        return "ต้องมีข้อมูลอย่างน้อย 15 ตา";
+
+    let correct=0;
+    let total=0;
+
+    for(let i=10;i<clean.length-1;i++){
+
+        let sub=clean.slice(0,i);
+
+        let rec=
+            recommendation(
+                sub,
+                confidence(sub)
+            );
+
+        let actual=clean[i];
+
+        if(
+            rec.includes("Banker")
+            && actual==="B"
+        ){
+            correct++;
+            total++;
+        }
+        else if(
+            rec.includes("Player")
+            && actual==="P"
+        ){
+            correct++;
+            total++;
+        }
+        else if(
+            rec.includes("Banker") ||
+            rec.includes("Player")
+        ){
+            total++;
+        }
+    }
+
+    if(total===0)
+        return "ยังไม่มีข้อมูล";
+
+    let acc=(
+        correct/total*100
+    ).toFixed(1);
+
+    let room=
+        acc>=70
+        ?"เข้ากับ AI"
+        :acc>=60
+        ?"Moderate"
+        :"Trap Zone";
+
+    return `
+        ✅ ถูก : ${correct}<br>
+        ❌ ผิด : ${total-correct}<br>
+        🎯 Accuracy : ${acc}%<br>
+        🏠 Room : ${room}
+    `;
+}
+
+function render(){
+
+    let raw=history.join("");
+    let clean=cleanPattern();
+
+    document.getElementById(
+        "raw"
+    ).innerHTML=raw;
+
+    document.getElementById(
+        "clean"
+    ).innerHTML=clean;
+
+    document.getElementById(
+        "groups"
+    ).innerHTML=
+    groupPattern(clean);
+
+    document.getElementById(
+        "pattern"
+    ).innerHTML=
+    detectPattern(clean);
+
+    let conf=
+    confidence(clean);
+
+    document.getElementById(
+        "confidence"
+    ).innerHTML=
+    conf+"%";
+
+    document.getElementById(
+        "recommend"
+    ).innerHTML=
+    recommendation(
+        clean,
+        conf
+    );
+
+    let b=
+    history.filter(
+        x=>x==="B"
+    ).length;
+
+    let p=
+    history.filter(
+        x=>x==="P"
+    ).length;
+
+    let t=
+    history.filter(
+        x=>x==="T"
+    ).length;
+
+    document.getElementById(
+        "stats"
+    ).innerHTML=`
+    🔴 ${b}<br>
+    🔵 ${p}<br>
+    🟢 ${t}
+    `;
+
+    let html="";
+
+    history.forEach(x=>{
+
+        let cls=
+            x==="B"
+            ?"red"
+            :x==="P"
+            ?"blue"
+            :"green";
+
+        html+=`
+        <div class="dot ${cls}">
+            ${x}
+        </div>`;
+    });
+
+    document.getElementById(
+        "history"
+    ).innerHTML=html;
+
+    document.getElementById(
+        "backtest"
+    ).innerHTML=
+    backtest();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
