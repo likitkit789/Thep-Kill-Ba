@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roulette Helper & Standalone Money Management</title>
+  <title>Baccarat DNA Helper & Money Management</title>
   <style>
     :root {
       --bg-color: #0b0f19;
@@ -57,98 +57,71 @@
       box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
     }
 
-    /* Roulette Table Grid */
-    .board-wrapper { overflow-x: auto; padding-bottom: 4px; }
-    .roulette-board { 
-      display: grid; 
-      grid-template-columns: 36px repeat(12, 1fr); 
-      grid-template-rows: repeat(3, 32px);
-      gap: 3px; 
-      min-width: 440px;
-    }
-    .btn-num { 
-      border: 1px solid rgba(255,255,255,0.15); 
-      border-radius: 4px; 
+    /* Baccarat Buttons */
+    .btn-group { display: flex; gap: 6px; }
+    .btn-act { 
+      flex: 1; 
+      padding: 10px; 
+      border: none; 
+      border-radius: 6px; 
       color: white; 
       font-weight: bold; 
       cursor: pointer; 
-      transition: all 0.15s ease; 
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 0.9rem; 
+      transition: opacity 0.2s, transform 0.1s;
     }
-    .btn-num:hover { transform: scale(1.08); z-index: 2; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
-    .btn-num:active { transform: scale(0.95); }
-    
-    .num-0 { background: #059669; grid-row: 1 / span 3; font-size: 1.1rem; border-color: #34d399; }
-    .num-red { background: #dc2626; }
-    .num-black { background: #1e293b; }
+    .btn-act:hover { opacity: 0.9; }
+    .btn-act:active { transform: scale(0.97); }
+    .btn-player { background: var(--accent-blue); box-shadow: 0 4px 0 #2563eb; }
+    .btn-banker { background: var(--accent-red); box-shadow: 0 4px 0 #dc2626; }
+    .btn-player:active { box-shadow: 0 0px 0 #2563eb; transform: translateY(4px); }
+    .btn-banker:active { box-shadow: 0 0px 0 #dc2626; transform: translateY(4px); }
+    .btn-undo { background: #475569; padding: 6px; font-size: 0.8rem; }
+    .btn-reset { background: #7f1d1d; padding: 6px; font-size: 0.8rem; }
 
-    /* Prediction / Recommendations Cards */
-    .recommend-section { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-    .rec-card { 
-      background: #0f172a; 
-      border: 2px solid #334155; 
-      border-radius: 6px; 
-      padding: 8px; 
-      text-align: center;
-      position: relative;
-    }
-    .rec-card.highlight { border-color: var(--accent-gold); background: #1e1b4b; }
-    .rec-title { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 2px; }
-    .rec-target { font-size: 0.95rem; font-weight: bold; color: var(--accent-green); }
-    .rec-badge { 
-      display: inline-block; 
-      font-size: 0.68rem; 
-      padding: 2px 6px; 
-      border-radius: 4px; 
-      margin-top: 4px; 
-      font-weight: bold; 
-    }
-    .badge-recommended { background: #065f46; color: #34d399; border: 1px solid #10b981; }
+    /* DNA Grid Layout */
+    .dna-container { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .dna-row { display: flex; align-items: center; background: #0f172a; border: 1px solid #1e293b; border-radius: 4px; padding: 6px 4px; }
+    .dna-label { width: 55px; font-size: 0.75rem; color: var(--text-sub); font-weight: bold; flex-shrink: 0; text-align: left; }
+    .dna-cells { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 2px; flex-grow: 1; align-items: center; scroll-behavior: smooth; }
+    .dna-cells::-webkit-scrollbar { height: 4px; }
+    .dna-cells::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     
-    /* DNA Tracker Streaks */
-    .dna-bar { display: flex; gap: 3px; justify-content: center; margin-top: 6px; overflow-x: auto; padding: 2px 0; }
     .dna-dot { 
-      width: 18px; 
-      height: 18px; 
+      width: 22px; 
+      height: 22px; 
       border-radius: 50%; 
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      font-size: 0.65rem; 
+      font-size: 0.75rem; 
       font-weight: bold; 
       flex-shrink: 0;
+      color: white;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.5);
     }
-    .dna-win { background: #10b981; color: white; }
-    .dna-lose { background: #ef4444; color: white; }
+    .dot-P { background: var(--accent-blue); }
+    .dot-B { background: var(--accent-red); }
+    .dot-win { background: var(--accent-green); box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
+    .dot-lose { background: var(--accent-red); box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
+    .dot-empty { background: #1e293b; box-shadow: none; border: 1px dashed #334155; color: transparent; }
 
-    /* Collapsible Statistics */
-    .toggle-btn { background: none; border: none; color: var(--accent-blue); font-size: 0.75rem; cursor: pointer; text-decoration: underline; }
-    .stats-container { display: none; margin-top: 8px; border-top: 1px dashed var(--card-border); padding-top: 8px; }
-    .stats-container.show { display: block; }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
-    .stat-item { background: #0f172a; padding: 6px; border-radius: 4px; border: 1px solid #1e293b; }
-    .stat-label { font-size: 0.7rem; color: var(--text-sub); }
-    .stat-val { font-size: 0.85rem; font-weight: bold; color: var(--accent-blue); }
+    /* Prediction Indicator */
+    .dna-pred { width: 50px; text-align: right; font-weight: bold; font-size: 0.85rem; flex-shrink: 0; margin-left: 6px; padding-left: 6px; border-left: 1px solid #334155; }
+    .text-P { color: var(--accent-blue); text-shadow: 0 0 6px rgba(59,130,246,0.6); }
+    .text-B { color: var(--accent-red); text-shadow: 0 0 6px rgba(220,38,38,0.6); }
+    .text-wait { color: var(--text-sub); font-size: 0.7rem; font-weight: normal; }
 
-    /* Money Management Tabs */
-    .tab-header { display: flex; gap: 4px; margin-bottom: 8px; }
-    .tab-btn { 
-      flex: 1; 
-      padding: 6px; 
-      background: #0f172a; 
-      border: 1px solid var(--card-border); 
-      color: var(--text-sub); 
-      border-radius: 4px; 
-      cursor: pointer; 
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    .tab-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+    /* Statistics */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; margin-top: 10px; }
+    .stat-item { background: #0f172a; padding: 8px; border-radius: 6px; border: 1px solid #1e293b; }
+    .stat-label { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 4px; }
+    .stat-val { font-size: 1rem; font-weight: bold; }
+    .val-p { color: var(--accent-blue); }
+    .val-b { color: var(--accent-red); }
+    .val-t { color: var(--accent-gold); }
 
-    /* Controls & Inputs */
+    /* Controls & Inputs for Finance */
     .mm-box { background: #0f172a; padding: 8px; border-radius: 6px; border: 1px solid #1e293b; }
     .input-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
     .input-row label { font-size: 0.75rem; color: var(--text-sub); width: 120px; flex-shrink: 0; }
@@ -162,52 +135,6 @@
       font-size: 0.85rem;
     }
 
-    .seq-display { 
-      background: #1e1b4b; 
-      border: 1px solid #4338ca; 
-      padding: 6px; 
-      border-radius: 4px; 
-      color: #a5b4fc; 
-      font-family: monospace; 
-      font-size: 0.9rem; 
-      text-align: center; 
-      margin: 6px 0; 
-      word-break: break-all;
-    }
-
-    .session-profit-box {
-      background: #064e3b;
-      border: 1px solid #059669;
-      border-radius: 6px;
-      padding: 8px;
-      text-align: center;
-      margin: 8px 0;
-    }
-
-    .bet-display-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; margin: 8px 0; }
-    .bet-box { background: #1e293b; padding: 6px; border-radius: 4px; }
-    .bet-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-green); }
-
-    /* Actions */
-    .btn-group { display: flex; gap: 6px; }
-    .btn-act { 
-      flex: 1; 
-      padding: 8px; 
-      border: none; 
-      border-radius: 4px; 
-      color: white; 
-      font-weight: bold; 
-      cursor: pointer; 
-      font-size: 0.85rem; 
-    }
-    .btn-act:hover { opacity: 0.9; }
-    .btn-win { background: var(--accent-green); }
-    .btn-lose { background: var(--accent-red); }
-    .btn-sub { background: #475569; }
-    .btn-reset-mm { background: #b91c1c; flex: 0.6; }
-    .btn-add-fin { background: var(--accent-purple); font-size: 0.85rem; }
-    .btn-danger { background: #dc2626; }
-
     /* Financial Dashboard */
     .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; }
     .dash-box { background: #0f172a; padding: 8px; border-radius: 6px; border: 1px solid #1e293b; text-align: center; }
@@ -220,19 +147,12 @@
     th, td { border: 1px solid #1e293b; padding: 6px; text-align: center; }
     th { background: #0f172a; color: var(--accent-gold); position: sticky; top: 0; }
 
-    .history-pills { display: flex; gap: 4px; overflow-x: auto; padding: 4px 0; max-width: 100%; }
-    .pill { 
-      padding: 2px 6px; 
-      border-radius: 3px; 
-      font-size: 0.75rem; 
-      font-weight: bold; 
-      color: white; 
-      flex-shrink: 0; 
-    }
-
     /* Progress bar */
     .progress-bar-bg { background: #1e293b; border-radius: 4px; height: 8px; width: 100%; overflow: hidden; margin-top: 4px; }
     .progress-bar-fill { background: var(--accent-green); height: 100%; width: 0%; transition: width 0.3s; }
+
+    .btn-win { background: var(--accent-green); }
+    .btn-danger { background: #dc2626; }
   </style>
 </head>
 <body>
@@ -245,138 +165,56 @@
     <button class="nav-btn" id="nav-finance" onclick="switchMainSection('finance')">📊 บันทึกบริหารการเงิน</button>
   </div>
 
-  <!-- SECTION 1: GAME HELPER & WALK MONEY -->
+  <!-- SECTION 1: BACCARAT DNA HELPER -->
   <div id="section-game">
     
-    <!-- 1. Roulette Game Board -->
+    <!-- 1. Input Section -->
     <div class="card">
       <div class="card-title">
-        <span>🎰 กระดานรูเล็ต (Live Grid)</span>
+        <span>🎯 จดไพ่บาคาร่า (Input)</span>
         <div style="display:flex; gap:4px;">
-          <button class="btn-act btn-sub" style="padding:3px 8px; font-size:0.75rem;" onclick="undoLast()">Undo</button>
-          <button class="btn-act btn-danger" style="padding:3px 8px; font-size:0.75rem;" onclick="resetStats()">ล้างค่าสถิติ</button>
+          <button class="btn-act btn-undo" onclick="undoLast()">↶ Undo</button>
+          <button class="btn-act btn-reset" onclick="resetData()">↻ ล้างข้อมูล</button>
         </div>
       </div>
       
-      <div class="board-wrapper">
-        <div class="roulette-board" id="board">
-          <!-- JS generates numbers 0-36 -->
-        </div>
-      </div>
-
-      <!-- History Bar -->
-      <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
-        <span style="font-size:0.7rem; color:var(--text-sub); flex-shrink:0;">ประวัติออก:</span>
-        <div class="history-pills" id="history-pills">
-          <span style="font-size:0.7rem; color:#64748b;">ยังไม่มีข้อมูล</span>
-        </div>
+      <div class="btn-group" style="margin-top: 10px;">
+        <button class="btn-act btn-player" onclick="addRecord('P')">P (Player)</button>
+        <button class="btn-act btn-banker" onclick="addRecord('B')">B (Banker)</button>
       </div>
     </div>
 
-    <!-- 2. Predictor & DNA Helper -->
+    <!-- 2. DNA Tracker (Bet 1 - Bet 5) -->
     <div class="card">
       <div class="card-title">
-        <span>📊 วิเคราะห์ตัวเล่นถัดไป & DNA (2 Zones)</span>
-        <button class="toggle-btn" onclick="toggleStats()">[ซ่อน/แสดง สถิติ]</button>
+        <span>🧬 ชุดรูปแบบ DNA (Bet 1 - Bet 5)</span>
       </div>
-
-      <!-- Recommendations -->
-      <div class="recommend-section">
-        <div class="rec-card" id="card-doz">
-          <div class="rec-title">แนะนำ โหล (Dozens)</div>
-          <div class="rec-target" id="rec-doz-text">รอข้อมูล...</div>
-          <div id="rec-doz-badge"></div>
-          <div class="dna-bar" id="dna-doz-bar"></div>
-        </div>
-
-        <div class="rec-card" id="card-col">
-          <div class="rec-title">แนะนำ คอลัมน์ (Columns)</div>
-          <div class="rec-target" id="rec-col-text">รอข้อมูล...</div>
-          <div id="rec-col-badge"></div>
-          <div class="dna-bar" id="dna-col-bar"></div>
-        </div>
-      </div>
-
-      <!-- Collapsible Statistics -->
-      <div class="stats-container" id="stats-box">
-        <div class="stats-grid">
-          <div class="stat-item"><div class="stat-label">1st Doz (1-12)</div><div class="stat-val" id="st-d1">0 (0%)</div></div>
-          <div class="stat-item"><div class="stat-label">2nd Doz (13-24)</div><div class="stat-val" id="st-d2">0 (0%)</div></div>
-          <div class="stat-item"><div class="stat-label">3rd Doz (25-36)</div><div class="stat-val" id="st-d3">0 (0%)</div></div>
-          <div class="stat-item"><div class="stat-label">1st Col (1,4,7..)</div><div class="stat-val" id="st-c1">0 (0%)</div></div>
-          <div class="stat-item"><div class="stat-label">2nd Col (2,5,8..)</div><div class="stat-val" id="st-c2">0 (0%)</div></div>
-          <div class="stat-item"><div class="stat-label">3rd Col (3,6,9..)</div><div class="stat-val" id="st-c3">0 (0%)</div></div>
-        </div>
+      
+      <div class="dna-container" id="dna-container">
+        <!-- Rendered via JS -->
       </div>
     </div>
 
-    <!-- 3. Money Management System (Martingale x3 / Labouchere) -->
+    <!-- 3. Statistics -->
     <div class="card">
       <div class="card-title">
-        <span>💰 ระบบเดินเงิน (Walk Money)</span>
+        <span>📊 สถิติ (Statistics)</span>
       </div>
-
-      <div class="tab-header">
-        <button class="tab-btn active" id="tab-lab" onclick="switchMM('lab')">Labouchere (ลาบูแชร์)</button>
-        <button class="tab-btn" id="tab-mar" onclick="switchMM('mar')">Martingale x3</button>
-      </div>
-
-      <!-- Labouchere Mode -->
-      <div id="mm-lab-panel" class="mm-box">
-        <div class="input-row">
-          <label>ชุดลำดับ:</label>
-          <input type="text" id="lab-seq-input" value="1, 2, 3, 4, 5" placeholder="พิมพ์เว้นวรรค เช่น 1 2 3 4 5" onkeyup="handleLabInputAutoComma(this)">
-          <button class="btn-act btn-sub" style="width:70px; padding:4px;" onclick="initLabSequence()">ตั้งค่า</button>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">น้ำเงิน (Player)</div>
+          <div class="stat-val val-p" id="stat-p">0</div>
         </div>
-        <div class="input-row">
-          <label>มูลค่าต่อหน่วย (บาท):</label>
-          <input type="number" id="lab-unit-val" value="10" onchange="calcBet()">
+        <div class="stat-item">
+          <div class="stat-label">แดง (Banker)</div>
+          <div class="stat-val val-b" id="stat-b">0</div>
         </div>
-        <div style="font-size:0.75rem; color:var(--text-sub);">ลำดับปัจจุบัน:</div>
-        <div class="seq-display" id="lab-seq-display">1 - 2 - 3 - 4 - 5</div>
-      </div>
-
-      <!-- Martingale Mode -->
-      <div id="mm-mar-panel" class="mm-box" style="display:none;">
-        <div class="input-row">
-          <label>หน่วยเริ่มต้น (บาท):</label>
-          <input type="number" id="mar-base" value="10" onchange="calcBet()">
-        </div>
-        <div class="input-row">
-          <label>ระดับทบ (Step):</label>
-          <span style="font-size:1rem; font-weight:bold; color:var(--accent-gold);" id="mar-step-text">1</span>
+        <div class="stat-item">
+          <div class="stat-label">จำนวนไม้รวม</div>
+          <div class="stat-val val-t" id="stat-total">0</div>
         </div>
       </div>
-
-      <!-- Bet Calculations Display -->
-      <div class="bet-display-grid">
-        <div class="bet-box">
-          <div style="font-size:0.7rem; color:var(--text-sub);">แทงต่อ 1 โซน</div>
-          <div class="bet-val" id="bet-per-zone">15</div>
-        </div>
-        <div class="bet-box">
-          <div style="font-size:0.7rem; color:var(--text-sub);">รวม 2 โซน (เดิมพันรวม)</div>
-          <div class="bet-val" style="color:var(--accent-gold);" id="bet-total">30</div>
-        </div>
-      </div>
-
-      <!-- Current Session Profit Box -->
-      <div class="session-profit-box">
-        <div style="font-size:0.72rem; color:#a7f3d0;">กำไร/ขาดทุน สะสมในรอบนี้ (Session Net)</div>
-        <div style="font-size:1.2rem; font-weight:bold; color:#34d399;" id="session-profit-text">+0 บาท</div>
-      </div>
-
-      <!-- Win / Lose / Reset Actions -->
-      <div class="btn-group" style="margin-bottom:8px;">
-        <button class="btn-act btn-win" onclick="processResult(true)">✓ ชนะ (Win)</button>
-        <button class="btn-act btn-lose" onclick="processResult(false)">✕ แพ้ (Lose)</button>
-        <button class="btn-act btn-reset-mm" onclick="resetMoneyManagement()">🔄 รีเซ็ตเดินเงิน</button>
-      </div>
-
-      <!-- Separate Button to Send Profit to Financial Management -->
-      <button class="btn-act btn-add-fin" style="width:100%; padding:10px;" onclick="transferSessionToFinancial()">
-        📥 เดินเงินจบแล้ว ➔ บันทึกเข้า "บริหารการเงิน"
-      </button>
     </div>
 
   </div>
@@ -460,7 +298,7 @@
           <label>คิดเป็น (% ของทุน):</label>
           <input type="text" id="manual-pct-display" placeholder="0%" readonly style="color:var(--accent-gold); font-weight:bold;">
         </div>
-        <button class="btn-act btn-win" style="width:100%; margin-top:4px;" onclick="addManualRecord()">➕ บันทึกรายการลงตาราง</button>
+        <button class="btn-act btn-win" style="width:100%; margin-top:4px; padding: 10px;" onclick="addManualRecord()">➕ บันทึกรายการลงตาราง</button>
       </div>
     </div>
 
@@ -468,7 +306,7 @@
     <div class="card">
       <div class="card-title">
         <span>📅 ตารางแสดงรายการเงินแต่ละวัน พร้อมเป้าหมาย</span>
-        <button class="btn-act btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="clearAllFinance()">ล้างข้อมูลทั้งหมด</button>
+        <button class="btn-act btn-danger" style="padding:4px 8px; font-size:0.75rem; flex: none;" onclick="clearAllFinance()">ล้างข้อมูลทั้งหมด</button>
       </div>
 
       <div class="fin-table-wrapper">
@@ -494,38 +332,15 @@
 </div>
 
 <script>
-  // --- GLOBAL STATE ---
-  let historyData = [];
-  const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-  
-  // Predictor DNA tracking
-  let dozDNAPredictions = [];
-  let colDNAPredictions = [];
+  // --- BACCARAT DNA LOGIC ---
+  let baccaratHistory = [];
+  const maxDisplayColumns = 30; // Maximum dots to show per row
 
-  // Money Management Mode: 'lab' or 'mar'
-  let mmMode = 'lab';
-  let labSeq = [1, 2, 3, 4, 5];
-  let marStep = 1;
-
-  // Session Net Profit (Standalone from direct financial log)
-  let sessionProfit = 0;
-
-  // Render on load
   window.onload = function() {
-    renderBoard();
+    renderDNA();
     loadCapitalAndTarget();
     loadFinanceTable();
-    initLabSequence();
-    updateSessionProfitUI();
   };
-
-  function handleLabInputAutoComma(inputEl) {
-    let val = inputEl.value;
-    let formatted = val.replace(/\s+/g, ', ').replace(/,+/g, ',');
-    if (formatted !== val) {
-      inputEl.value = formatted;
-    }
-  }
 
   // Main Section Navigation (Game vs Finance Tab)
   function switchMainSection(sec) {
@@ -540,355 +355,235 @@
     }
   }
 
-  // Render Roulette Board
-  function renderBoard() {
-    const board = document.getElementById('board');
-    board.innerHTML = '';
-
-    const btn0 = document.createElement('button');
-    btn0.className = 'btn-num num-0';
-    btn0.innerText = '0';
-    btn0.onclick = () => addNumber(0);
-    board.appendChild(btn0);
-
-    const gridLayout = [
-      [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
-      [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
-      [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
-    ];
-
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 12; c++) {
-        const num = gridLayout[r][c];
-        const btn = document.createElement('button');
-        const isRed = redNumbers.includes(num);
-        btn.className = `btn-num ${isRed ? 'num-red' : 'num-black'}`;
-        btn.innerText = num;
-        btn.style.gridRow = r + 1;
-        btn.style.gridColumn = c + 2;
-        btn.onclick = () => addNumber(num);
-        board.appendChild(btn);
-      }
-    }
-  }
-
-  function addNumber(num) {
-    evaluateLastPrediction(num);
-    historyData.push(num);
-    updateHistoryPills();
-    calculateStats();
-    calcBet();
+  function addRecord(result) {
+    baccaratHistory.push(result);
+    renderDNA();
+    updateStats();
   }
 
   function undoLast() {
-    if (historyData.length === 0) return;
-    historyData.pop();
-    if (dozDNAPredictions.length > 0) dozDNAPredictions.pop();
-    if (colDNAPredictions.length > 0) colDNAPredictions.pop();
-    
-    updateHistoryPills();
-    calculateStats();
-    calcBet();
-  }
-
-  function resetStats() {
-    if (historyData.length === 0) return;
-    if (confirm('คุณต้องการล้างค่าสถิติตัวเลขทั้งหมดหรือไม่?')) {
-      historyData = [];
-      dozDNAPredictions = [];
-      colDNAPredictions = [];
-      window.currentDozRec = null;
-      window.currentColRec = null;
-      updateHistoryPills();
-      calculateStats();
+    if (baccaratHistory.length > 0) {
+      baccaratHistory.pop();
+      renderDNA();
+      updateStats();
     }
   }
 
-  function updateHistoryPills() {
-    const container = document.getElementById('history-pills');
-    if (historyData.length === 0) {
-      container.innerHTML = '<span style="font-size:0.7rem; color:#64748b;">ยังไม่มีข้อมูล</span>';
-      return;
+  function resetData() {
+    if (baccaratHistory.length === 0) return;
+    if (confirm('ยืนยันการล้างข้อมูลเกมทั้งหมด?')) {
+      baccaratHistory = [];
+      renderDNA();
+      updateStats();
     }
+  }
+
+  function getOpposite(val) {
+    if(val === 'P') return 'B';
+    if(val === 'B') return 'P';
+    return val;
+  }
+
+  // Calculate Win/Loss DNA rows based on history alignment
+  function calculateDNARows() {
+    let rows = { bet1: [], bet2: [], bet3: [], bet4: [], bet5: [] };
     
-    container.innerHTML = '';
-    const recent = historyData.slice(-12).reverse();
-    recent.forEach(num => {
-      const pill = document.createElement('div');
-      pill.className = 'pill';
-      if (num === 0) pill.style.background = '#059669';
-      else if (redNumbers.includes(num)) pill.style.background = '#dc2626';
-      else pill.style.background = '#334155';
-      pill.innerText = num;
-      container.appendChild(pill);
-    });
-  }
-
-  function toggleStats() {
-    const box = document.getElementById('stats-box');
-    box.classList.toggle('show');
-  }
-
-  function calculateStats() {
-    const total = historyData.length;
-    let doz = [0, 0, 0];
-    let col = [0, 0, 0];
-
-    historyData.forEach(num => {
-      if (num === 0) return;
-      if (num >= 1 && num <= 12) doz[0]++;
-      else if (num >= 13 && num <= 24) doz[1]++;
-      else if (num >= 25 && num <= 36) doz[2]++;
-
-      if (num % 3 === 1) col[0]++;
-      else if (num % 3 === 2) col[1]++;
-      else if (num % 3 === 0) col[2]++;
-    });
-
-    const pct = v => total > 0 ? ((v / total) * 100).toFixed(1) + '%' : '0%';
-    document.getElementById('st-d1').innerText = `${doz[0]} (${pct(doz[0])})`;
-    document.getElementById('st-d2').innerText = `${doz[1]} (${pct(doz[1])})`;
-    document.getElementById('st-d3').innerText = `${doz[2]} (${pct(doz[2])})`;
-    document.getElementById('st-c1').innerText = `${col[0]} (${pct(col[0])})`;
-    document.getElementById('st-c2').innerText = `${col[1]} (${pct(col[1])})`;
-    document.getElementById('st-c3').innerText = `${col[2]} (${pct(col[2])})`;
-
-    if (total >= 2) {
-      let dozIndexed = doz.map((v, i) => ({ id: i + 1, count: v }));
-      dozIndexed.sort((a, b) => b.count - a.count);
-      const recDoz1 = dozIndexed[0].id;
-      const recDoz2 = dozIndexed[1].id;
-
-      let colIndexed = col.map((v, i) => ({ id: i + 1, count: v }));
-      colIndexed.sort((a, b) => b.count - a.count);
-      const recCol1 = colIndexed[0].id;
-      const recCol2 = colIndexed[1].id;
-
-      document.getElementById('rec-doz-text').innerText = `โหล ${recDoz1} & โหล ${recDoz2}`;
-      document.getElementById('rec-col-text').innerText = `คอลัมน์ ${recCol1} & คอลัมน์ ${recCol2}`;
-
-      const dozDiff = dozIndexed[0].count - dozIndexed[2].count;
-      const colDiff = colIndexed[0].count - colIndexed[2].count;
-
-      const cardDoz = document.getElementById('card-doz');
-      const cardCol = document.getElementById('card-col');
-      const badgeDoz = document.getElementById('rec-doz-badge');
-      const badgeCol = document.getElementById('rec-col-badge');
-
-      if (dozDiff >= colDiff) {
-        cardDoz.className = 'rec-card highlight';
-        cardCol.className = 'rec-card';
-        badgeDoz.innerHTML = '<span class="rec-badge badge-recommended">★ อัตราน่าเล่นสูง</span>';
-        badgeCol.innerHTML = '';
+    for (let i = 0; i < baccaratHistory.length; i++) {
+      let current = baccaratHistory[i];
+      
+      // Bet 1 (Follow last) & Bet 2 (Opposite last)
+      if (i >= 1) {
+        rows.bet1.push(current === baccaratHistory[i-1] ? 'W' : 'L');
+        rows.bet2.push(current === getOpposite(baccaratHistory[i-1]) ? 'W' : 'L');
       } else {
-        cardCol.className = 'rec-card highlight';
-        cardDoz.className = 'rec-card';
-        badgeCol.innerHTML = '<span class="rec-badge badge-recommended">★ อัตราน่าเล่นสูง</span>';
-        badgeDoz.innerHTML = '';
+        rows.bet1.push(null); 
+        rows.bet2.push(null);
       }
 
-      window.currentDozRec = [recDoz1, recDoz2];
-      window.currentColRec = [recCol1, recCol2];
-    } else {
-      document.getElementById('rec-doz-text').innerText = 'รอข้อมูล...';
-      document.getElementById('rec-col-text').innerText = 'รอข้อมูล...';
-      document.getElementById('rec-doz-badge').innerHTML = '';
-      document.getElementById('rec-col-badge').innerHTML = '';
-    }
-
-    renderDNABars();
-  }
-
-  function evaluateLastPrediction(newNum) {
-    if (!window.currentDozRec || newNum === 0) {
-      if (newNum === 0 && window.currentDozRec) {
-        dozDNAPredictions.push(false);
-        colDNAPredictions.push(false);
+      // Bet 3 (Follow 2 steps ago) & Bet 4 (Opposite 2 steps ago)
+      if (i >= 2) {
+        rows.bet3.push(current === baccaratHistory[i-2] ? 'W' : 'L');
+        rows.bet4.push(current === getOpposite(baccaratHistory[i-2]) ? 'W' : 'L');
+      } else {
+        rows.bet3.push(null); 
+        rows.bet4.push(null);
       }
-      return;
-    }
 
-    let actualDoz = 0;
-    if (newNum >= 1 && newNum <= 12) actualDoz = 1;
-    else if (newNum >= 13 && newNum <= 24) actualDoz = 2;
-    else if (newNum >= 25 && newNum <= 36) actualDoz = 3;
-
-    const dozWin = window.currentDozRec.includes(actualDoz);
-    dozDNAPredictions.push(dozWin);
-
-    let actualCol = 0;
-    if (newNum % 3 === 1) actualCol = 1;
-    else if (newNum % 3 === 2) actualCol = 2;
-    else if (newNum % 3 === 0) actualCol = 3;
-
-    const colWin = window.currentColRec.includes(actualCol);
-    colDNAPredictions.push(colWin);
-  }
-
-  function renderDNABars() {
-    const dozBar = document.getElementById('dna-doz-bar');
-    const colBar = document.getElementById('dna-col-bar');
-
-    dozBar.innerHTML = dozDNAPredictions.slice(-7).map(w => 
-      `<div class="dna-dot ${w ? 'dna-win':'dna-lose'}">${w ? '✓':'✕'}</div>`
-    ).join('');
-
-    colBar.innerHTML = colDNAPredictions.slice(-7).map(w => 
-      `<div class="dna-dot ${w ? 'dna-win':'dna-lose'}">${w ? '✓':'✕'}</div>`
-    ).join('');
-  }
-
-  // --- MONEY MANAGEMENT LOGIC (STANDALONE) ---
-
-  function switchMM(mode) {
-    mmMode = mode;
-    document.getElementById('tab-lab').className = `tab-btn ${mode === 'lab' ? 'active':''}`;
-    document.getElementById('tab-mar').className = `tab-btn ${mode === 'mar' ? 'active':''}`;
-
-    document.getElementById('mm-lab-panel').style.display = mode === 'lab' ? 'block' : 'none';
-    document.getElementById('mm-mar-panel').style.display = mode === 'mar' ? 'block' : 'none';
-
-    calcBet();
-  }
-
-  function initLabSequence() {
-    const str = document.getElementById('lab-seq-input').value;
-    const arr = str.replace(/,/g, ' ').split(/\s+/).map(n => parseInt(n.trim())).filter(n => !isNaN(n) && n > 0);
-    if (arr.length > 0) {
-      labSeq = arr;
-    } else {
-      labSeq = [1, 2, 3, 4, 5];
-    }
-    updateLabUI();
-    calcBet();
-  }
-
-  function updateLabUI() {
-    const disp = document.getElementById('lab-seq-display');
-    if (labSeq.length === 0) {
-      disp.innerText = "🎉 จบชุดลำดับ! สำเร็จเป้าหมายรอบนี้แล้ว";
-      disp.style.color = "var(--accent-green)";
-    } else {
-      disp.innerText = labSeq.join(" - ");
-      disp.style.color = "#a5b4fc";
-    }
-  }
-
-  function resetMoneyManagement() {
-    if (mmMode === 'lab') {
-      initLabSequence();
-    } else {
-      marStep = 1;
-      document.getElementById('mar-step-text').innerText = 1;
-    }
-    sessionProfit = 0;
-    updateSessionProfitUI();
-    calcBet();
-  }
-
-  function calcBet() {
-    let unitBet = 0;
-
-    if (mmMode === 'lab') {
-      const unitVal = parseFloat(document.getElementById('lab-unit-val').value) || 10;
-      if (labSeq.length === 0) {
-        initLabSequence();
-      }
-      if (labSeq.length === 1) {
-        unitBet = labSeq[0];
-      } else if (labSeq.length > 1) {
-        unitBet = labSeq[0] + labSeq[labSeq.length - 1];
-      }
-      unitBet = unitBet * unitVal;
-    } else {
-      const base = parseFloat(document.getElementById('mar-base').value) || 10;
-      unitBet = base * Math.pow(3, marStep - 1);
-      document.getElementById('mar-step-text').innerText = marStep;
-    }
-
-    document.getElementById('bet-per-zone').innerText = unitBet.toLocaleString();
-    document.getElementById('bet-total').innerText = (unitBet * 2).toLocaleString();
-  }
-
-  function processResult(isWin) {
-    const betPerZone = parseFloat(document.getElementById('bet-per-zone').innerText.replace(/,/g, '')) || 0;
-    const totalBet = betPerZone * 2;
-    let netChange = 0;
-
-    if (isWin) {
-      netChange = betPerZone;
-
-      if (mmMode === 'lab' && labSeq.length > 0) {
-        if (labSeq.length === 1) {
-          labSeq = [];
-        } else {
-          labSeq.shift();
-          labSeq.pop();
-        }
-      } else if (mmMode === 'mar') {
-        marStep = 1;
-      }
-    } else {
-      netChange = -totalBet;
-
-      if (mmMode === 'lab') {
-        const unitVal = parseFloat(document.getElementById('lab-unit-val').value) || 10;
-        const lostUnits = Math.round(totalBet / unitVal);
-        labSeq.push(lostUnits);
-      } else if (mmMode === 'mar') {
-        marStep++;
+      // Bet 5 (Follow 3 steps ago)
+      if (i >= 3) {
+        rows.bet5.push(current === baccaratHistory[i-3] ? 'W' : 'L');
+      } else {
+        rows.bet5.push(null);
       }
     }
+    return rows;
+  }
 
-    sessionProfit += netChange;
-    updateSessionProfitUI();
+  // Predict the next outcome for Bet 1-5
+  function getNextPredictions() {
+    let n = baccaratHistory.length;
+    if (n === 0) return { bet1: null, bet2: null, bet3: null, bet4: null, bet5: null };
     
-    if (mmMode === 'lab') updateLabUI();
-    calcBet();
+    return {
+      bet1: n >= 1 ? baccaratHistory[n-1] : null,
+      bet2: n >= 1 ? getOpposite(baccaratHistory[n-1]) : null,
+      bet3: n >= 2 ? baccaratHistory[n-2] : null,
+      bet4: n >= 2 ? getOpposite(baccaratHistory[n-2]) : null,
+      bet5: n >= 3 ? baccaratHistory[n-3] : null,
+    };
   }
 
-  function updateSessionProfitUI() {
-    const el = document.getElementById('session-profit-text');
-    el.innerText = (sessionProfit >= 0 ? '+' : '') + sessionProfit.toLocaleString() + ' บาท';
-    el.style.color = sessionProfit >= 0 ? '#34d399' : '#f87171';
-  }
+  function renderDNA() {
+    const container = document.getElementById('dna-container');
+    container.innerHTML = '';
+    
+    const n = baccaratHistory.length;
+    
+    // --- 1. Render History Row (Raw P/B input) ---
+    const histDiv = document.createElement('div');
+    histDiv.className = 'dna-row';
+    histDiv.style.background = '#1e293b';
+    histDiv.style.borderBottom = '2px solid #334155';
+    
+    const histLabel = document.createElement('div');
+    histLabel.className = 'dna-label';
+    histLabel.style.color = '#fff';
+    histLabel.innerText = 'ผลที่ออก';
+    histDiv.appendChild(histLabel);
+    
+    const histCells = document.createElement('div');
+    histCells.className = 'dna-cells';
+    histCells.id = 'hist-cells';
+    
+    let displayHist = baccaratHistory.slice(-maxDisplayColumns);
+    let renderSlots = Math.max(15, displayHist.length);
+    
+    for(let i = 0; i < renderSlots; i++) {
+      const dot = document.createElement('div');
+      let val = displayHist[i];
+      if (val === 'P') {
+        dot.className = 'dna-dot dot-P';
+        dot.innerText = 'P';
+      } else if (val === 'B') {
+        dot.className = 'dna-dot dot-B';
+        dot.innerText = 'B';
+      } else {
+        dot.className = 'dna-dot dot-empty';
+        dot.innerText = '-';
+      }
+      histCells.appendChild(dot);
+    }
+    histDiv.appendChild(histCells);
+    
+    // Empty prediction block to keep alignment symmetrical
+    const histPred = document.createElement('div');
+    histPred.className = 'dna-pred';
+    histPred.style.color = 'transparent';
+    histPred.style.borderLeftColor = 'transparent';
+    histPred.innerText = '>>>'; 
+    histDiv.appendChild(histPred);
+    
+    container.appendChild(histDiv);
 
-  // Transfer current walk-money session profit into Financial Records
-  function transferSessionToFinancial() {
-    if (sessionProfit === 0) {
-      alert('ยังไม่มีกำไร/ขาดทุนสะสมในรอบเดินเงินนี้');
-      return;
+    // --- 2. Render DNA W/L Rows (Bet 1 - Bet 5) ---
+    const dnaData = calculateDNARows();
+    const preds = getNextPredictions();
+    const rowNames = ['Bet 1', 'Bet 2', 'Bet 3', 'Bet 4', 'Bet 5'];
+    const rowKeys = ['bet1', 'bet2', 'bet3', 'bet4', 'bet5'];
+
+    for(let r = 0; r < 5; r++) {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'dna-row';
+      
+      const labelDiv = document.createElement('div');
+      labelDiv.className = 'dna-label';
+      labelDiv.innerText = rowNames[r];
+      rowDiv.appendChild(labelDiv);
+
+      const cellsDiv = document.createElement('div');
+      cellsDiv.className = 'dna-cells';
+      cellsDiv.id = `dna-cells-${r}`;
+
+      const dataArr = dnaData[rowKeys[r]];
+      let displayData = dataArr.slice(-maxDisplayColumns);
+      let slots = Math.max(15, displayData.length);
+
+      for (let c = 0; c < slots; c++) {
+        const dot = document.createElement('div');
+        let val = displayData[c];
+        
+        if (val === 'W') {
+          dot.className = 'dna-dot dot-win';
+          dot.innerText = '✓';
+        } else if (val === 'L') {
+          dot.className = 'dna-dot dot-lose';
+          dot.innerText = '✗';
+        } else {
+          dot.className = 'dna-dot dot-empty';
+          dot.innerText = '-';
+        }
+        cellsDiv.appendChild(dot);
+      }
+
+      rowDiv.appendChild(cellsDiv);
+      
+      // Prediction Indicator
+      const predDiv = document.createElement('div');
+      predDiv.className = 'dna-pred';
+      let pVal = preds[rowKeys[r]];
+      
+      if (pVal === 'P') {
+        predDiv.className += ' text-P';
+        predDiv.innerText = '>>> P';
+      } else if (pVal === 'B') {
+        predDiv.className += ' text-B';
+        predDiv.innerText = '>>> B';
+      } else {
+        predDiv.className += ' text-wait';
+        predDiv.innerText = 'รอข้อมูล';
+      }
+      
+      rowDiv.appendChild(predDiv);
+      container.appendChild(rowDiv);
     }
 
-    if (confirm(`คุณต้องการบันทึกยอด ${sessionProfit >= 0 ? '+' : ''}${sessionProfit.toLocaleString()} บาท เข้าสู่ระบบบริหารการเงินหรือไม่?`)) {
-      saveFinanceRecord(sessionProfit);
-      alert('บันทึกยอดเข้าสู่ระบบบริหารการเงินเรียบร้อยแล้ว!');
-      sessionProfit = 0;
-      updateSessionProfitUI();
-      if (mmMode === 'lab') initLabSequence();
-      else marStep = 1;
-      calcBet();
-    }
+    // Auto-scroll all grids to the end
+    setTimeout(() => {
+      document.getElementById('hist-cells').scrollLeft = document.getElementById('hist-cells').scrollWidth;
+      for(let r = 0; r < 5; r++) {
+        const cd = document.getElementById(`dna-cells-${r}`);
+        if(cd) cd.scrollLeft = cd.scrollWidth;
+      }
+    }, 50);
   }
 
-  // --- FINANCIAL MANAGEMENT & TARGETS ---
+  function updateStats() {
+    let pCount = baccaratHistory.filter(v => v === 'P').length;
+    let bCount = baccaratHistory.filter(v => v === 'B').length;
+    
+    document.getElementById('stat-p').innerText = pCount;
+    document.getElementById('stat-b').innerText = bCount;
+    document.getElementById('stat-total').innerText = baccaratHistory.length;
+  }
+
+  // --- FINANCIAL MANAGEMENT & TARGETS (Kept intact) ---
 
   function saveCapitalAndTarget() {
     const cap = parseFloat(document.getElementById('capital-input').value) || 0;
     const targetMonthlyPct = parseFloat(document.getElementById('target-monthly-pct-input').value) || 0;
     const targetDailyPct = parseFloat(document.getElementById('target-daily-pct-input').value) || 0;
     
-    localStorage.setItem('roulette_app_capital', cap);
-    localStorage.setItem('roulette_app_target_m_pct', targetMonthlyPct);
-    localStorage.setItem('roulette_app_target_d_pct', targetDailyPct);
+    localStorage.setItem('bacc_app_capital', cap);
+    localStorage.setItem('bacc_app_target_m_pct', targetMonthlyPct);
+    localStorage.setItem('bacc_app_target_d_pct', targetDailyPct);
     
     loadFinanceTable();
   }
 
   function loadCapitalAndTarget() {
-    const cap = localStorage.getItem('roulette_app_capital') || "10000";
-    const targetMonthlyPct = localStorage.getItem('roulette_app_target_m_pct') || "30";
-    const targetDailyPct = localStorage.getItem('roulette_app_target_d_pct') || "3";
+    const cap = localStorage.getItem('bacc_app_capital') || "10000";
+    const targetMonthlyPct = localStorage.getItem('bacc_app_target_m_pct') || "30";
+    const targetDailyPct = localStorage.getItem('bacc_app_target_d_pct') || "3";
 
     document.getElementById('capital-input').value = cap;
     document.getElementById('target-monthly-pct-input').value = targetMonthlyPct;
@@ -921,36 +616,36 @@
 
   function saveFinanceRecord(amount) {
     const today = new Date().toISOString().split('T')[0];
-    let data = JSON.parse(localStorage.getItem('roulette_app_fin')) || {};
+    let data = JSON.parse(localStorage.getItem('bacc_app_fin')) || {};
     data[today] = (data[today] || 0) + amount;
-    localStorage.setItem('roulette_app_fin', JSON.stringify(data));
+    localStorage.setItem('bacc_app_fin', JSON.stringify(data));
     loadFinanceTable();
   }
 
   function deleteSingleDay(dateStr) {
     if (confirm(`คุณต้องการลบข้อมูลการเงินของวันที่ ${dateStr} หรือไม่?`)) {
-      let data = JSON.parse(localStorage.getItem('roulette_app_fin')) || {};
+      let data = JSON.parse(localStorage.getItem('bacc_app_fin')) || {};
       delete data[dateStr];
-      localStorage.setItem('roulette_app_fin', JSON.stringify(data));
+      localStorage.setItem('bacc_app_fin', JSON.stringify(data));
       loadFinanceTable();
     }
   }
 
   function clearAllFinance() {
     if (confirm('คุณต้องการล้างประวัติการเงินทั้งหมดหรือไม่?')) {
-      localStorage.removeItem('roulette_app_fin');
+      localStorage.removeItem('bacc_app_fin');
       loadFinanceTable();
     }
   }
 
   function loadFinanceTable() {
-    const data = JSON.parse(localStorage.getItem('roulette_app_fin')) || {};
+    const data = JSON.parse(localStorage.getItem('bacc_app_fin')) || {};
     const tbody = document.getElementById('fin-tbody');
     tbody.innerHTML = '';
 
-    const capital = parseFloat(localStorage.getItem('roulette_app_capital')) || 10000;
-    const targetMonthlyPct = parseFloat(localStorage.getItem('roulette_app_target_m_pct')) || 30;
-    const targetDailyPct = parseFloat(localStorage.getItem('roulette_app_target_d_pct')) || 3;
+    const capital = parseFloat(localStorage.getItem('bacc_app_capital')) || 10000;
+    const targetMonthlyPct = parseFloat(localStorage.getItem('bacc_app_target_m_pct')) || 30;
+    const targetDailyPct = parseFloat(localStorage.getItem('bacc_app_target_d_pct')) || 3;
 
     const targetMonthlyVal = capital * (targetMonthlyPct / 100);
     const targetDailyVal = capital * (targetDailyPct / 100);
@@ -975,7 +670,6 @@
           monthlyProfitSum += val;
         }
 
-        // Target Status Badge
         let statusHtml = '';
         if (val >= targetDailyVal) {
           statusHtml = `<span style="color:var(--accent-green); font-weight:bold;">🎯 ทะลุเป้า</span>`;
@@ -996,7 +690,7 @@
           </td>
           <td>${statusHtml}</td>
           <td>
-            <button class="btn-act btn-danger" style="padding:2px 5px; font-size:0.68rem;" onclick="deleteSingleDay('${d}')">ลบ</button>
+            <button class="btn-act btn-danger" style="padding:4px 6px; font-size:0.75rem;" onclick="deleteSingleDay('${d}')">ลบ</button>
           </td>
         `;
         tbody.appendChild(tr);
